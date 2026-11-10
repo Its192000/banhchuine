@@ -501,7 +501,118 @@ const MAJORS = [
 const ROMAN=["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"];
 const PAL=[{bg:"#F6C6E6",d:"#B4518E"},{bg:"#E3D3FF",d:"#7357C0"},{bg:"#BFE6FA",d:"#2F7EAA"},{bg:"#E6F78A",d:"#6E861A"},{bg:"#FFE2B8",d:"#B56E22"}];
 /* Giai đoạn 4 sẽ thêm 56 lá Ẩn phụ vào mảng này (suit: wands/cups/swords/pentacles). */
-const CARDS = MAJORS.map((c,i)=>({id:"m"+i,suit:"major",num:i,...c}));
+/* =========================================================
+   NGHĨA THEO VAI TRÒ — mỗi lá 5 mảnh: trạng thái | cảm xúc | trở ngại | lời khuyên | kết quả
+   (xuôi rồi ngược). Lời giải chọn đúng mảnh theo vị trí của lá trong trải.
+   ========================================================= */
+const MAJ_F=[
+"khởi đầu mới, tự do và hồn nhiên|háo hức, tò mò, muốn thử điều mới|sự vội vàng, liều lĩnh khi chưa chuẩn bị|dám bắt đầu, cứ thử một bước nhỏ|một trang mới đầy bất ngờ|do dự trước ngưỡng cửa mới|phân vân, sợ sai, chưa dám bước|sự liều lĩnh thiếu suy nghĩ, hoặc sợ quá không dám đi|lên kế hoạch rõ rồi mới bước|một bước hụt nếu đi quá vội",
+"thời điểm chủ động, đủ kỹ năng và công cụ|tự tin, muốn thể hiện, biết rõ mình muốn gì|việc ôm đồm nhiều mà chưa dồn sức vào đâu|chủ động biến ý tưởng thành việc làm|kết quả do chính tay mình tạo ra|tiềm năng bị bỏ phí, thiếu tập trung|nói nhiều hơn làm, có phần toan tính|lời nói không đi đôi với việc làm|nhìn hành động thay vì nghe lời ngọt|kế hoạch dang dở vì thiếu tập trung",
+"điều chưa lộ diện, cần lắng nghe trực giác|kín đáo, cảm nhận nhiều nhưng giữ trong lòng|thông tin còn bị giấu, chưa rõ ràng|tin trực giác và quan sát thêm trước khi hành động|sự thật dần hé lộ theo thời gian|giai đoạn bỏ qua tiếng nói bên trong|rối bời, khép kín, có điều giấu|bí mật hoặc sự thiếu minh bạch|hỏi thẳng nhẹ nhàng thay vì đoán mò|một bí mật bị lộ ra",
+"sung túc, được yêu thương và chăm sóc|dịu dàng, quan tâm, muốn vun đắp|việc cho đi quá nhiều mà quên bản thân|chăm sóc bản thân và vun đắp từ từ|thành quả nở hoa, đủ đầy|cạn năng lượng, bỏ bê bản thân|mệt mỏi, phụ thuộc, thiếu được quan tâm|sự phụ thuộc hoặc bao bọc quá mức|nạp lại năng lượng cho mình trước|trì trệ nếu không chăm lại bản thân",
+"ổn định, có kỷ luật và trật tự|nghiêm túc, muốn bảo vệ, muốn nắm tình hình|sự cứng nhắc, áp đặt|lập kế hoạch rõ và giữ kỷ luật|nền tảng vững chắc, lâu dài|mất kiểm soát hoặc bị kiểm soát|bướng bỉnh, khó chịu khi bị trái ý|sự kiểm soát hoặc thiếu kỷ luật|đặt ranh giới và sắp xếp lại nhịp sống|xung đột nếu không ai chịu nhường",
+"khuôn khổ, truyền thống, sự nghiêm túc|muốn ổn định, nghiêm túc, tôn trọng chuẩn mực|khuôn phép cũ và áp lực từ người lớn|học từ người đi trước, làm đúng quy trình|một cam kết chính thức, được công nhận|mong muốn phá lệ, đi đường riêng|gò bó, muốn thoát khỏi khuôn mẫu|khác biệt quan điểm, áp lực phải theo khuôn|sống theo giá trị của mình, không cần giống ai|một lối đi riêng không theo lối mòn",
+"kết nối hòa hợp, đồng điệu|rung động, thích thật lòng, muốn gắn bó|việc phải chọn giữa hai điều đều muốn|chọn theo giá trị thật của mình|một mối gắn kết đẹp, đúng người|lệch nhịp, mất cân bằng|phân vân, cảm xúc chưa ổn định|sự lưỡng lự hoặc không cùng giá trị|thành thật với cảm xúc của mình trước|hai ngả đường nếu không ai chịu nói thật",
+"tiến lên với quyết tâm cao|quyết tâm, chủ động, muốn chinh phục|sự nóng vội, muốn thắng bằng mọi giá|giữ vững tay lái và tập trung vào đích|chiến thắng nhờ ý chí|mất phương hướng, bị kéo về hai phía|bất lực, mất kiểm soát, nản|thiếu định hướng, mỗi người một ngả|dừng lại xác định lại mục tiêu|chững lại nếu cứ chạy mà không có đích",
+"dịu dàng mà bản lĩnh|kiên nhẫn, bao dung, nhịn để giữ hòa khí|cảm xúc mạnh cần được kiềm chế|mềm mỏng mà kiên định|vượt qua bằng sự kiên nhẫn|tự ti, yếu lòng|bất an, dễ nổi nóng, nghi ngờ bản thân|sự tự ti hoặc nóng giận|hít thở sâu trước khi phản ứng và tin vào mình|đuối sức nếu cứ gồng một mình",
+"chậm lại, nhìn vào bên trong|cần không gian riêng, trầm tư, chưa muốn mở lòng|sự thu mình, giữ khoảng cách|dành thời gian một mình để hiểu mình muốn gì|câu trả lời đến từ bên trong|cô lập quá lâu|cô đơn, khép kín, ngại kết nối|sự cô lập, không chịu chia sẻ|mở lòng và nhờ người khác giúp|lạc lõng nếu cứ đóng cửa",
+"bước ngoặt, vận may đang xoay chiều|bất ngờ, thấy như có duyên|những thay đổi ngoài tầm kiểm soát|nắm lấy cơ hội khi nó đến|một bước ngoặt may mắn|vòng xoay đi xuống tạm thời|chán nản, thấy mình xui|vận xui tạm thời và lặp lại lỗi cũ|kiên nhẫn và phá bỏ thói quen cũ|trì hoãn, phải chờ vòng quay mới",
+"công bằng, rõ ràng, có nhân có quả|lý trí, đang cân nhắc đúng sai|nhu cầu sòng phẳng, rõ trách nhiệm|thẳng thắn, trung thực và chịu trách nhiệm|kết quả xứng đáng với những gì đã làm|thiếu công bằng, né tránh|thấy bất công, có điều không thật lòng|sự thiếu trung thực hoặc bất công|đối diện sự thật và ghi lại mọi thứ rõ ràng|hệ quả của việc né tránh",
+"tạm dừng, chờ đợi để nhìn khác đi|lửng lơ, chưa biết làm gì, đang chờ|sự trì hoãn, mọi thứ treo lơ lửng|đổi góc nhìn và buông bớt kiểm soát|sáng tỏ sau một thời gian chờ|trì trệ, hy sinh vô ích|mệt vì chờ, thấy mình hy sinh nhiều|sự hy sinh một phía, dậm chân tại chỗ|thôi chờ và chủ động thay đổi|kẹt mãi nếu không thay đổi",
+"kết thúc một giai đoạn để chuyển hóa|muốn thay đổi, sẵn sàng khép lại chuyện cũ|điều đã hết nhưng chưa chịu buông|dứt khoát khép lại để mở trang mới|một thay đổi lớn, khép cũ mở mới|níu kéo, sợ thay đổi|luyến tiếc, sợ mất, không muốn kết thúc|sự níu kéo cái đã cũ|chấp nhận thay đổi từng bước nhỏ|dang dở kéo dài nếu cứ níu",
+"cân bằng, hài hòa, chậm mà chắc|bình tâm, sẵn lòng dung hòa|việc cần kiên nhẫn, không thể vội|giữ nhịp vừa phải và dung hòa hai bên|sự hòa hợp bền lâu|mất cân bằng, quá đà|bồn chồn, thiếu kiên nhẫn|sự quá đà hoặc lệch nhịp|điều chỉnh lại nhịp sống, bớt cực đoan|căng thẳng nếu không điều chỉnh",
+"ràng buộc bởi cám dỗ hay thói quen|bị cuốn hút mạnh, ham muốn, có phần chiếm hữu|sự ràng buộc, ghen tuông hoặc thói quen xấu|nhận ra điều đang trói mình và đặt ranh giới|mắc kẹt nếu không tỉnh táo|dần thoát khỏi ràng buộc|tỉnh ra, muốn được giải thoát|dư âm của thói quen cũ|dứt hẳn khỏi điều độc hại|tự do sau khi cắt đứt ràng buộc",
+"biến động bất ngờ làm lộ sự thật|sốc, rối, bị bất ngờ|một cú sốc hoặc sự đổ vỡ đột ngột|giữ bình tĩnh, xây lại trên nền thật hơn|đổ vỡ để làm lại từ đầu|khủng hoảng âm ỉ, cố né|lo lắng, cố giữ bề ngoài yên ổn|việc né tránh điều buộc phải đối mặt|chủ động thay đổi trước khi mọi thứ vỡ|thay đổi từ bên trong, ít ồn ào hơn",
+"hy vọng, chữa lành sau giông bão|nhẹ nhõm, tin tưởng, mơ mộng|kỳ vọng hơi xa vời|giữ niềm tin và chăm chữa lành cho mình|điều ước dần thành hiện thực|mất niềm tin, nản lòng|thất vọng, mệt mỏi, mất động lực|sự hoài nghi và nản lòng|nghỉ ngơi rồi đặt một mục tiêu nhỏ|niềm tin trở lại chậm hơn mong đợi",
+"mơ hồ, chưa rõ thật giả|bất an, nghi ngờ, cảm xúc lẫn lộn|hiểu lầm, thông tin không rõ ràng|đừng vội kết luận, kiểm tra kỹ sự thật|mọi thứ còn mù mờ một thời gian|sương mù tan dần|bớt lo, bắt đầu thấy rõ|nỗi sợ cũ còn sót lại|nói rõ mọi chuyện để gỡ hiểu lầm|sự thật sáng tỏ",
+"vui vẻ, rõ ràng, thành công|vui, thoải mái, rất có thiện cảm|sự quá tự tin dẫn tới chủ quan|tự tin thể hiện mình và tận hưởng|thành công rạng rỡ, kết quả tốt|niềm vui bị che khuất tạm thời|vui nhưng chưa trọn, kỳ vọng hơi cao|kỳ vọng quá cao hoặc chủ quan|hạ kỳ vọng và tận hưởng điều nhỏ|kết quả tốt nhưng chậm hơn mong đợi",
+"thức tỉnh, thời điểm quyết định|muốn làm lại, sẵn sàng tha thứ|việc phải đối diện với quá khứ|nhìn lại, tha thứ và quyết định dứt khoát|cơ hội thứ hai, một sự hồi sinh|do dự, tự trách|hối hận, tự trách, sợ bị phán xét|sự tự trách và do dự|tha thứ cho mình và đừng để lỡ thời cơ|bỏ lỡ cơ hội nếu cứ do dự",
+"trọn vẹn, hoàn thành một chặng|mãn nguyện, thấy đủ đầy|việc cần khép lại trọn vẹn chặng cũ|hoàn tất việc đang làm rồi mở chặng mới|thành tựu trọn vẹn, viên mãn|gần xong mà còn dang dở|thấy thiếu một chút, chưa trọn|việc dang dở chưa khép lại|cố thêm chút nữa để về đích|về đích muộn hơn dự tính"
+];
+const MAJ_EL=["air","air","water","earth","fire","earth","air","water","fire","earth","fire","air","water","water","fire","earth","fire","air","water","fire","fire","earth"];
+/* Ẩn phụ: emoji | tone xuôi,ngược | từ khóa xuôi | từ khóa ngược | 5 mảnh xuôi | 5 mảnh ngược */
+const MINOR_RAW={
+wands:[
+"🔥|1,-1|Cảm hứng;Khởi đầu;Đam mê|Trì hoãn;Hụt hứng;Thiếu lửa|ngọn lửa cảm hứng mới vừa nhen lên|hào hứng, có lửa, muốn bắt tay ngay|nhiệt huyết bùng lên rồi tắt nhanh|bắt tay làm ngay khi còn hứng khởi|một khởi đầu đầy nhiệt huyết|ý tưởng có mà chưa bắt đầu|hụt hứng, thiếu động lực|sự trì hoãn và thiếu lửa|chọn một việc nhỏ làm ngay hôm nay|cơ hội nguội đi nếu cứ chờ",
+"🔥|1,0|Lên kế hoạch;Tầm nhìn;Chọn hướng|Sợ thay đổi;Thiếu kế hoạch;Do dự|đứng trước nhiều hướng, đang lên kế hoạch|đang cân nhắc, nhìn xa, muốn tiến thêm|sự chần chừ giữa vùng an toàn và hướng mới|vạch kế hoạch rõ rồi chọn hướng|bước mở rộng sang hướng mới|nỗi ngại rời vùng an toàn|lo sợ điều chưa biết|thiếu kế hoạch, sợ thay đổi|viết ra từng bước cụ thể|dậm chân nếu không dám chọn",
+"🔥|1,0|Mở rộng;Chờ kết quả;Cơ hội xa|Chậm trễ;Thất vọng nhẹ;Trở ngại|giai đoạn đã gieo, đang chờ cơ hội đến|mong chờ, lạc quan về tương lai|kết quả cần thêm thời gian|kiên nhẫn và nhìn xa hơn|cơ hội mở rộng, có tin vui từ xa|kế hoạch bị chậm lại|sốt ruột, hơi thất vọng|sự chậm trễ ngoài dự tính|điều chỉnh kế hoạch và chuẩn bị phương án dự phòng|chậm hơn mong đợi nhưng chưa hỏng",
+"🔥|1,0|Ăn mừng;Ổn định;Sum vầy|Bất ổn nhỏ;Thiếu hòa hợp;Chuyển tiếp|niềm vui, ổn định, đáng ăn mừng|vui vẻ, thấy an toàn, muốn gắn bó|việc giữ cho niềm vui này bền vững|ăn mừng thành quả cùng người thân|một cột mốc vui, có thể là ra mắt hay về chung nhà|niềm vui chưa trọn vẹn|thiếu cảm giác thuộc về|bất hòa nhỏ trong nhà hoặc trong nhóm|trò chuyện để mọi người cùng nhịp|ổn định đến chậm hơn",
+"🔥|-1,0|Cạnh tranh;Va chạm;Bất đồng|Tránh xung đột;Làm hòa;Mâu thuẫn ngầm|va chạm, mỗi người một ý|khó chịu, muốn hơn thua|cãi vã, cạnh tranh không cần thiết|lắng nghe trước, tranh luận sau|căng thẳng nếu ai cũng muốn thắng|mâu thuẫn dịu xuống|mệt vì tranh cãi, muốn yên|mâu thuẫn ngầm chưa nói ra|nói thẳng nhẹ nhàng để giải quyết dứt điểm|làm hòa được nếu cùng lùi một bước",
+"🔥|1,-1|Chiến thắng;Được công nhận;Tự hào|Bị lãng quên;Tự cao;Thất bại tạm thời|chiến thắng, được ghi nhận|tự hào, tự tin, muốn thể hiện|dễ tự mãn khi đang thắng|tự tin đón nhận thành quả|được công nhận, thành công rõ ràng|nỗ lực chưa được ghi nhận|tủi thân, thấy mình bị xem nhẹ|thiếu ghi nhận hoặc cái tôi quá lớn|tự công nhận mình, đừng chờ người khác|thành công đến muộn",
+"🔥|0,-1|Giữ lập trường;Phòng thủ;Kiên trì|Đuối sức;Bỏ cuộc;Bị áp đảo|phải bảo vệ điều mình tin|phòng thủ, cảnh giác, không muốn nhường|áp lực từ nhiều phía|giữ vững lập trường của mình|trụ vững nếu không bỏ cuộc|đuối sức vì chống đỡ|mệt mỏi, muốn buông|sự quá tải và cảm giác bị áp đảo|chọn trận đáng đánh, bỏ bớt cái không cần|kiệt sức nếu gánh hết mọi thứ",
+"🔥|1,-1|Tốc độ;Tin nhắn đến;Tiến triển nhanh|Chậm trễ;Vội vàng;Lỡ nhịp|mọi thứ chuyển động nhanh|nôn nóng, muốn liên lạc ngay|mọi thứ quá nhanh, chưa kịp nghĩ|tận dụng đà và phản hồi nhanh|tin tức hoặc tiến triển đến rất nhanh|mọi thứ bị chững lại|sốt ruột, mong tin mà chưa có|chậm trễ, lỡ nhịp liên lạc|kiên nhẫn, đừng nhắn dồn dập|tin đến chậm hơn mong đợi",
+"🔥|0,-1|Kiên cường;Cảnh giác;Gần đích|Kiệt sức;Phòng thủ quá mức;Nghi ngờ|chặng cuối sau nhiều thử thách|dè chừng, từng bị tổn thương nên cảnh giác|vết thương cũ khiến khó tin tưởng|cố thêm chút nữa, đích ở ngay trước mặt|vượt qua chặng cuối nhờ kiên trì|kiệt sức, phòng thủ quá mức|mệt, nghi ngờ mọi thứ|sự nghi ngờ và mệt mỏi kéo dài|nghỉ ngơi và cho phép mình tin lại|buông xuôi nếu không nghỉ ngơi",
+"🔥|-1,0|Gánh nặng;Quá tải;Trách nhiệm|Buông bớt;Giao việc;Nhẹ gánh|gánh quá nhiều trách nhiệm|áp lực, nặng nề, ôm hết một mình|quá tải vì ôm đồm|chia bớt việc, nhờ người khác phụ|kiệt sức nếu cứ gánh một mình|bắt đầu buông bớt gánh nặng|muốn nhẹ nhõm, mệt vì trách nhiệm|khó buông việc không phải của mình|nói không với việc không thuộc phần mình|nhẹ gánh khi biết buông",
+"🧒|1,0|Tin vui;Tò mò;Khám phá|Bốc đồng;Thiếu định hướng;Tin chậm|tin vui, ý tưởng mới mẻ|tò mò, thích thú, muốn tìm hiểu|nhiệt tình nhưng thiếu kinh nghiệm|thử điều mới với tinh thần học hỏi|một tin vui hoặc lời mời thú vị|hăng hái mà thiếu hướng|thích đó rồi chán đó|sự bốc đồng, cả thèm chóng chán|chọn một hướng và theo đến cùng|tin đến chậm hoặc không như kỳ vọng",
+"🏇|1,-1|Nhiệt huyết;Phiêu lưu;Hành động nhanh|Hấp tấp;Nóng nảy;Thiếu kiên nhẫn|nhiệt huyết, hành động nhanh|đam mê, nồng nhiệt, muốn tiến tới ngay|sự hấp tấp, thiếu cân nhắc|hành động mạnh mẽ nhưng nhìn đường|một bước tiến nhanh, có thể là chuyến đi|nóng vội, bốc đồng|nồng nhiệt chóng vánh, dễ chán|nóng nảy và thiếu kiên nhẫn|chậm lại trước khi quyết|đổ vỡ vì quá vội",
+"👸|1,0|Tự tin;Ấm áp;Cuốn hút|Ghen tuông;Bất an;Thiếu tự tin|sự tự tin, ấm áp và cuốn hút|tự tin, quý mến, muốn kết nối|cái tôi mạnh dễ lấn át người khác|tự tin là chính mình|tỏa sáng và thu hút người phù hợp|bất an, mất tự tin|ghen tuông, nhạy cảm, dễ tổn thương|sự ghen tuông hoặc tự ti|tự chăm sóc và tin lại giá trị của mình|căng thẳng nếu để ghen tuông dẫn dắt",
+"🤴|1,-1|Lãnh đạo;Tầm nhìn;Quyết đoán|Độc đoán;Nóng tính;Kỳ vọng cao|tầm nhìn rõ, dám dẫn dắt|quyết đoán, nghiêm túc, muốn dẫn dắt|tính áp đặt, muốn mọi thứ theo ý mình|đứng ra dẫn dắt với tầm nhìn dài hạn|thành công nhờ dám quyết|độc đoán, nóng tính|khó chịu, đòi hỏi cao|sự độc đoán hoặc kỳ vọng quá cao|lắng nghe người khác trước khi quyết|mất lòng người nếu quá áp đặt"
+],
+cups:[
+"💧|1,-1|Tình cảm mới;Mở lòng;Yêu thương|Khép lòng;Dồn nén;Hụt hẫng|một tình cảm mới chớm nở|rung động, yêu thương, mở lòng|cảm xúc dâng trào khó kiểm soát|mở lòng đón nhận yêu thương|một khởi đầu tình cảm đẹp|cảm xúc bị dồn nén|khép lòng, ngại thể hiện|nỗi sợ tổn thương nên không dám mở lòng|chữa lành cho mình trước khi trao đi|lỡ một cơ hội tình cảm nếu cứ khép",
+"💧|1,-1|Đồng điệu;Kết đôi;Hòa hợp|Lệch nhịp;Rạn nứt;Mất cân bằng|hai người đồng điệu, có qua có lại|thích, thấy hợp, muốn gần hơn|nhu cầu cân bằng giữa cho và nhận|chủ động bày tỏ, đối xử ngang hàng|một mối quan hệ hòa hợp, có thể thành đôi|lệch nhịp, mất cân bằng|hụt hẫng, thấy không được đáp lại|sự hiểu lầm hoặc cho nhận không đều|nói chuyện thẳng thắn về mong muốn của mỗi người|xa cách nếu không ai chịu nói",
+"💧|1,-1|Vui vẻ;Bạn bè;Ăn mừng|Quá đà;Người thứ ba;Thị phi|vui vẻ, tụ tập, ăn mừng|vui, thoải mái, thích ở cạnh|niềm vui quá đà, thiếu nghiêm túc|tận hưởng niềm vui cùng bạn bè|một dịp vui, tin mừng để ăn mừng|vui quá đà hoặc lạc lõng|hời hợt, thiếu nghiêm túc|người thứ ba hoặc chuyện thị phi trong nhóm|cẩn thận lời ra tiếng vào, chọn bạn mà chơi|rạn nứt vì thị phi",
+"💧|0,0|Chán chường;Thờ ơ;Bỏ lỡ|Thức tỉnh;Đón cơ hội;Ra khỏi vỏ ốc|chán chường, thờ ơ với điều đang có|lưỡng lự, chưa thật sự hứng thú|sự thờ ơ khiến bỏ lỡ cơ hội|nhìn lại xung quanh vì có cơ hội đang chờ|lỡ cơ hội nếu cứ thờ ơ|bắt đầu thoát khỏi chán chường|dần quan tâm lại, muốn thử|thói quen than phiền cũ|đón lấy lời mời mới|một cơ hội mới được nắm lấy",
+"💧|-1,1|Mất mát;Tiếc nuối;Buồn bã|Chấp nhận;Bước tiếp;Hồi phục|nỗi buồn vì mất mát, tiếc nuối|buồn, tiếc nuối, chưa nguôi chuyện cũ|việc mãi nhìn vào điều đã mất|chấp nhận mất mát và nhìn vào điều còn lại|nỗi buồn rồi sẽ qua, vẫn còn điều quý giá|đang dần nguôi ngoai|bắt đầu chấp nhận, muốn bước tiếp|chút tiếc nuối còn sót lại|tha thứ và bước tiếp|hồi phục, nhẹ lòng hơn",
+"💧|1,0|Hoài niệm;Ngây thơ;Kỷ niệm|Mắc kẹt quá khứ;Trưởng thành;Buông chuyện cũ|sự ngọt ngào, nhẹ nhàng như kỷ niệm|nhớ nhung, hoài niệm, thấy thân thuộc|việc sống mãi trong kỷ niệm|trân trọng kỷ niệm nhưng sống cho hiện tại|người cũ hoặc chuyện cũ quay lại nhẹ nhàng|mắc kẹt trong quá khứ|níu kéo, so sánh với ngày xưa|sự níu kéo kỷ niệm cũ|buông chuyện cũ để lớn lên|trang mới khi thôi nhìn lại",
+"💧|0,1|Nhiều lựa chọn;Mơ mộng;Ảo tưởng|Tỉnh táo;Quyết định rõ;Thực tế|nhiều lựa chọn, hơi mơ mộng|phân vân, mơ mộng, chưa rõ mình muốn gì|ảo tưởng, chọn theo cảm xúc nhất thời|tỉnh táo chọn điều thực tế nhất|lạc hướng nếu chỉ mơ mà không chọn|bắt đầu thấy rõ|tỉnh táo hơn, biết mình muốn gì|chút do dự còn lại|chốt một lựa chọn và theo đến cùng|một quyết định rõ ràng, đúng hướng",
+"💧|0,-1|Rời đi;Tìm điều sâu hơn;Buông bỏ|Sợ rời đi;Lưỡng lự;Quay lại|rời bỏ điều không còn nuôi dưỡng mình|thất vọng, muốn rút lui, tìm điều sâu hơn|cảm giác điều đang có không còn đủ|dũng cảm rời đi để tìm điều đúng hơn|một sự ra đi để tìm hạnh phúc thật|muốn đi mà không dám|lưỡng lự, sợ cô đơn|nỗi sợ rời vùng quen thuộc|hỏi lòng mình thật sự muốn gì|dằn vặt nếu cứ ở lại vì sợ",
+"💧|1,0|Mãn nguyện;Ước nguyện;Hài lòng|Tham lam;Chưa đủ;Tự mãn|mãn nguyện, ước nguyện thành|hài lòng, vui vẻ, thấy đủ|sự tự mãn|biết ơn và tận hưởng điều đang có|điều ước thành hiện thực|có nhiều mà vẫn thấy thiếu|chưa thỏa mãn, đòi hỏi nhiều|kỳ vọng quá cao hoặc tham lam|nhìn vào điều mình thật sự cần|ước nguyện thành nhưng không như tưởng",
+"💧|1,-1|Hạnh phúc trọn vẹn;Gia đình;Bình yên|Bất hòa;Kỳ vọng sai;Rạn nứt|hạnh phúc, bình yên như một gia đình|yêu thương, muốn gắn bó lâu dài|kỳ vọng mọi thứ phải hoàn hảo|vun đắp sự gắn kết mỗi ngày|một hạnh phúc trọn vẹn, lâu dài|rạn nứt trong gia đình hoặc mối quan hệ|thất vọng vì không như mơ|bất hòa, giá trị không giống nhau|ngồi lại nói về điều mỗi người cần|rạn nứt nếu không chịu nói chuyện",
+"🧒|1,0|Tin nhắn ngọt;Lãng mạn;Sáng tạo|Mơ mộng;Quá nhạy cảm;Thiếu chín chắn|tin nhắn ngọt ngào, cảm xúc mới|e thẹn, thích thầm, muốn làm quen|cảm xúc non nớt, dễ tổn thương|bày tỏ cảm xúc một cách dễ thương|một lời tỏ tình hay tin vui bất ngờ|cảm xúc chưa chín chắn|nhạy cảm, dỗi hờn, thất thường|sự mơ mộng và nhạy cảm quá mức|bình tĩnh trước khi phản ứng|thất vọng nếu kỳ vọng quá nhiều",
+"🏇|1,0|Lãng mạn;Lời đề nghị;Theo đuổi|Hứa suông;Thất thường;Mơ mộng|lời mời lãng mạn, sự theo đuổi|say mê, lãng mạn, muốn theo đuổi|việc lý tưởng hóa người kia|theo đuổi điều mình thích bằng sự chân thành|một lời đề nghị hay lời tỏ tình|lời hứa không đi kèm hành động|thất thường, nói hay mà làm ít|lời hứa suông, cảm xúc thất thường|nhìn hành động hơn lời hứa|hụt hẫng vì lời hứa không thành",
+"👸|1,0|Thấu cảm;Dịu dàng;Trực giác|Quá nhạy cảm;Phụ thuộc;Kiệt sức cảm xúc|sự dịu dàng, thấu hiểu, giàu tình cảm|thương thật lòng, quan tâm sâu sắc|việc ôm cảm xúc của người khác vào mình|lắng nghe trái tim và trực giác|một kết nối sâu sắc, đầy thấu hiểu|cạn kiệt cảm xúc|nhạy cảm quá, dễ tổn thương, phụ thuộc|sự phụ thuộc cảm xúc|đặt ranh giới cảm xúc, chăm mình trước|mệt mỏi nếu cứ sống vì người khác",
+"🤴|1,-1|Điềm tĩnh;Chín chắn;Bao dung|Thao túng;Lạnh lùng;Kìm nén|sự điềm tĩnh, chín chắn về cảm xúc|trân trọng, bình tĩnh, thương mà ít nói|việc kìm nén cảm xúc quá mức|giữ bình tĩnh và bao dung|một tình cảm vững vàng, trưởng thành|cảm xúc bị kìm nén hoặc bị thao túng|lạnh lùng, khó đoán|sự lạnh lùng hoặc thao túng cảm xúc|thể hiện cảm xúc thật, đừng giấu|xa cách vì không ai nói ra lòng mình"
+],
+swords:[
+"⚔️|1,-1|Sáng suốt;Sự thật;Quyết định rõ|Rối trí;Hiểu lầm;Lời làm tổn thương|đầu óc sáng suốt, sự thật được nói ra|rõ ràng, thẳng thắn, đã có quyết định|sự thật có thể làm đau|nói rõ suy nghĩ một cách trung thực|một quyết định dứt khoát, mọi thứ sáng tỏ|suy nghĩ rối ren|bối rối, dễ nói lời làm tổn thương|hiểu lầm và lời nói nặng nề|suy nghĩ kỹ trước khi nói|hiểu lầm kéo dài nếu nói vội",
+"⚔️|0,0|Bế tắc;Né tránh;Lưỡng lự|Rối trí;Quá tải thông tin;Buộc phải chọn|bế tắc, chưa dám đối diện|lưỡng lự, che giấu cảm xúc thật|việc né tránh một quyết định khó|mở mắt nhìn sự thật và chọn|bế tắc kéo dài nếu không quyết|bị buộc phải lựa chọn|rối trí, căng thẳng|quá nhiều thông tin, không biết tin ai|chọn điều làm lòng mình yên nhất|một lựa chọn cuối cùng cũng được đưa ra",
+"⚔️|-1,0|Đau lòng;Tổn thương;Thất vọng|Chữa lành;Tha thứ;Buông nỗi đau|nỗi đau lòng, tổn thương|buồn, tổn thương, thất vọng|nỗi đau từ lời nói hay sự phản bội|cho phép mình buồn rồi chữa lành|một cú đau lòng, nhưng sẽ qua|vết thương dần lành|nguôi ngoai, bắt đầu tha thứ|nỗi đau cũ còn âm ỉ|tha thứ để nhẹ lòng|hồi phục sau tổn thương",
+"⚔️|0,0|Nghỉ ngơi;Hồi phục;Tĩnh lặng|Kiệt sức;Bồn chồn;Trở lại|cần nghỉ ngơi, tạm dừng|mệt, muốn yên tĩnh một mình|sự kiệt sức cần thời gian hồi phục|nghỉ ngơi thật sự, đừng ép mình|hồi phục và trở lại mạnh mẽ hơn|bắt đầu hoạt động lại|bồn chồn, không nghỉ được|kiệt sức vì không chịu nghỉ|ngủ đủ và giảm bớt việc|đổ bệnh nếu không chịu nghỉ",
+"⚔️|-1,0|Hơn thua;Xung đột;Thắng mà mất|Làm hòa;Hối hận;Bỏ qua|xung đột, hơn thua|muốn thắng, cay cú hoặc thấy bị chèn ép|cái tôi và sự hơn thua|chọn hòa khí thay vì phải thắng|thắng mà mất lòng nhau|xung đột lắng xuống|hối hận, muốn làm lành|dư âm cãi vã còn đó|chủ động làm hòa|hàn gắn sau cãi vã",
+"⚔️|1,0|Chuyển tiếp;Rời xa khó khăn;Bình yên dần|Chưa buông được;Mắc kẹt;Quay lại chuyện cũ|rời xa sóng gió, sang giai đoạn êm hơn|muốn bỏ lại phía sau, tìm bình yên|những chuyện cũ vẫn còn mang theo|bước sang chặng mới, để chuyện cũ lại|mọi thứ yên ả hơn dần|muốn đi mà chưa đi được|mắc kẹt, chưa buông được|chuyện cũ chưa giải quyết xong|giải quyết dứt điểm trước khi đi tiếp|chuyển tiếp chậm, còn vướng",
+"⚔️|-1,0|Mưu mẹo;Không thật lòng;Lén lút|Lộ chuyện;Thú nhận;Thành thật|điều không minh bạch|giấu giếm, toan tính, chưa thật lòng|sự lừa dối hoặc lén lút|tỉnh táo, kiểm tra kỹ trước khi tin|bị lừa hoặc lộ chuyện nếu không cẩn thận|sự thật dần lộ ra|áy náy, muốn thú nhận|lương tâm cắn rứt|thành thật dù khó|sự thật được nói ra",
+"⚔️|-1,1|Bế tắc;Tự giới hạn;Sợ hãi|Giải thoát;Nhìn rõ;Tự do|cảm giác bị mắc kẹt, không lối thoát|bất lực, sợ hãi, thấy mình bị trói|nỗi sợ và suy nghĩ tự giới hạn|nhận ra lối ra luôn có, chỉ cần bước|kẹt lại nếu tin mình bất lực|bắt đầu thoát ra|nhẹ hơn, thấy có lối ra|chút sợ hãi còn sót lại|bước tiếp từng bước nhỏ|tự do, thoát khỏi bế tắc",
+"⚔️|-1,1|Lo âu;Mất ngủ;Suy nghĩ nhiều|Bớt lo;Tìm trợ giúp;Hy vọng|lo âu, suy nghĩ nhiều|lo lắng, mất ngủ, tự trách|nỗi lo bị phóng đại trong đầu|viết nỗi lo ra và chia sẻ với người tin cậy|lo âu kéo dài nếu cứ ôm một mình|nỗi lo dịu dần|bớt lo, bắt đầu thấy hy vọng|chút lo âu còn sót lại|tìm người nói chuyện, đừng chịu một mình|nhẹ nhõm dần",
+"⚔️|-1,0|Chạm đáy;Kết thúc đau;Buông xuôi|Hồi phục;Đứng dậy;Tệ nhất đã qua|chạm đáy, một kết thúc đau|kiệt quệ, thấy mọi thứ sụp đổ|một kết thúc không tránh được|chấp nhận kết thúc để bắt đầu lại|kết thúc hẳn, nhưng tệ nhất sẽ qua|tệ nhất đã qua|mệt nhưng bắt đầu hồi phục|dư chấn của chuyện cũ|đứng dậy từ từ, đừng quay lại vết xe cũ|hồi phục dần",
+"🧒|0,-1|Tò mò;Học hỏi;Tin tức|Tin đồn;Thiếu suy nghĩ;Dò xét|sự tò mò, ham học hỏi, quan sát|tò mò, dò xét, muốn tìm hiểu|nói nhiều mà nghĩ ít|tìm hiểu kỹ thông tin trước khi quyết|một tin tức mới cần kiểm chứng|nhiều lời, thiếu suy nghĩ|dò xét, nghi ngờ|tin đồn và lời nói thiếu suy nghĩ|cẩn trọng lời nói, đừng tin đồn|rắc rối vì lời ra tiếng vào",
+"🏇|0,-1|Quyết liệt;Thẳng thắn;Nhanh chóng|Hung hăng;Vội vàng;Nói không nghĩ|sự quyết liệt, thẳng thắn|quyết liệt, nói thẳng, muốn làm ngay|sự vội vàng và lời nói sắc|hành động nhanh nhưng có lý lẽ|mọi thứ diễn ra nhanh và dứt khoát|hung hăng, mất kiểm soát|nóng nảy, nói không suy nghĩ|sự hung hăng, thiếu suy xét|chậm lại và nói ít đi|tổn thương nhau vì lời nói vội",
+"👸|0,-1|Độc lập;Sắc sảo;Rõ ràng|Cay nghiệt;Lạnh lùng;Khép lòng|sự độc lập, sắc sảo, rõ ràng|lý trí, thẳng thắn, giữ khoảng cách|lý trí lấn át cảm xúc|đặt ranh giới rõ ràng và nói thật|một quyết định tỉnh táo, độc lập|lạnh lùng, cay nghiệt|chua chát, khép lòng vì tổn thương cũ|sự cay nghiệt và lạnh lùng|mềm lại một chút, đừng để vết thương cũ nói thay|cô đơn nếu cứ lạnh lùng",
+"🤴|0,-1|Lý trí;Công bằng;Uy tín|Áp đặt;Lạnh lùng;Lạm quyền|lý trí, công bằng, nói có sách|phân tích, đánh giá, nghiêm túc|sự quá lý trí, thiếu mềm mỏng|quyết định dựa trên lý lẽ và sự thật|kết quả rõ ràng, công bằng|áp đặt, lạm quyền|lạnh lùng, cứng nhắc, khó gần|sự áp đặt và lạnh lùng|cân bằng lý trí với cảm xúc|xung đột vì cứng nhắc"
+],
+pentacles:[
+"🪙|1,-1|Cơ hội tài chính;Khởi đầu vững;Thịnh vượng|Cơ hội lỡ;Tiêu hoang;Thiếu kế hoạch|một cơ hội thực tế, nguồn tiền mới|muốn nghiêm túc, tính chuyện lâu dài|cơ hội cần bắt tay làm mới thành|nắm cơ hội và đầu tư công sức|một khởi đầu vững chắc, có lộc|cơ hội bị bỏ lỡ|lo lắng chuyện tiền, thiếu an toàn|tiêu xài thiếu kế hoạch|lên kế hoạch chi tiêu rõ ràng|lỡ lộc nếu không chuẩn bị",
+"🪙|0,-1|Cân bằng;Linh hoạt;Xoay xở|Quá tải;Mất cân bằng;Rối tiền|xoay xở cân bằng nhiều việc|bận rộn, phân vân, cố chiều mọi thứ|việc ôm nhiều thứ cùng lúc|linh hoạt sắp xếp thứ tự ưu tiên|giữ được cân bằng nếu biết ưu tiên|quá tải, rối|bị quá tải, mệt|mất cân bằng tiền bạc hoặc thời gian|bớt việc và ghi chép chi tiêu|rơi rớt việc nếu cứ ôm hết",
+"🪙|1,0|Hợp tác;Tay nghề;Được ghi nhận|Phối hợp kém;Thiếu kỹ năng;Lệch ý|hợp tác tốt, tay nghề được ghi nhận|nể phục, muốn cùng xây dựng|nhu cầu phối hợp ăn ý|làm việc nhóm và trau dồi kỹ năng|thành quả nhờ hợp tác|phối hợp không ăn ý|thấy không được coi trọng|thiếu kỹ năng hoặc lệch ý nhau|nói rõ vai trò của từng người|làm lại nếu không thống nhất",
+"🪙|0,0|Giữ chặt;Tiết kiệm;An toàn|Keo kiệt;Nới lỏng;Chi tiêu|việc giữ chặt điều mình có|thận trọng, sợ mất, chiếm hữu|sự bám chặt, sợ mất mát|tiết kiệm nhưng đừng khép lòng|an toàn nhưng chậm phát triển|bắt đầu nới lỏng|dễ chịu hơn hoặc tiêu xài bốc đồng|sự keo kiệt hoặc tiêu hoang|cân bằng giữa giữ và cho|tài chính thay đổi, cần để ý",
+"🪙|-1,1|Thiếu thốn;Khó khăn;Cô đơn|Hồi phục;Được giúp;Vượt khó|khó khăn, thiếu thốn|cô đơn, thấy bị bỏ rơi|khó khăn tài chính hoặc cảm giác bị bỏ rơi|mạnh dạn nhờ giúp đỡ|giai đoạn khó, nhưng có người sẵn sàng giúp|khó khăn đang qua|bớt lo, thấy có hy vọng|dư âm khó khăn cũ|đón nhận sự giúp đỡ|hồi phục dần",
+"🪙|1,-1|Cho và nhận;Hào phóng;Hỗ trợ|Nợ nần;Cho nhận lệch;Có điều kiện|sự cho và nhận cân bằng, được giúp đỡ|quan tâm, muốn chăm lo|nhu cầu công bằng trong cho nhận|giúp người và cũng nhận giúp|được hỗ trợ đúng lúc|cho nhận lệch, có điều kiện|thấy mình cho nhiều mà nhận ít|nợ nần hoặc sự giúp đỡ có điều kiện|rõ ràng chuyện tiền bạc|rắc rối vì nợ nần",
+"🪙|0,-1|Kiên nhẫn;Chờ thu hoạch;Đầu tư dài hạn|Sốt ruột;Công sức uổng;Đổi hướng|giai đoạn đã gieo, đang chờ thu hoạch|kiên nhẫn chờ xem, đang cân nhắc|kết quả cần thêm thời gian|kiên nhẫn và đánh giá lại cách làm|thu hoạch xứng đáng nếu chờ đủ lâu|nỗ lực chưa thấy kết quả|sốt ruột, nản lòng|đầu tư sai chỗ|xem lại cách làm, đổi hướng nếu cần|công sức uổng nếu không điều chỉnh",
+"🪙|1,0|Chăm chỉ;Rèn luyện;Tỉ mỉ|Cầu toàn;Làm qua loa;Chán việc|sự chăm chỉ rèn luyện, làm tỉ mỉ|nghiêm túc, cố gắng, đầu tư công sức|nhu cầu khổ luyện thêm|kiên trì luyện tập mỗi ngày|tay nghề tiến bộ rõ rệt|làm qua loa hoặc quá cầu toàn|chán, thiếu động lực|sự cầu toàn hoặc làm cho có|tìm lại lý do mình bắt đầu|dậm chân nếu làm cho có",
+"🪙|1,-1|Độc lập;Sung túc;Tự chủ|Phụ thuộc;Tiêu quá tay;Thiếu tự lập|sự độc lập, sung túc, tự chủ|tự tin, thoải mái, không cần dựa dẫm|sự tự lập quá mức nên ngại mở lòng|tận hưởng thành quả mình làm ra|tự chủ tài chính, sống thoải mái|chưa tự lập|bất an, phụ thuộc|sự phụ thuộc người khác hoặc tiêu quá tay|xây nguồn thu riêng, tự đứng vững|chật vật nếu dựa dẫm",
+"🪙|1,-1|Bền vững;Gia đình;Di sản|Tranh chấp;Bất ổn tài chính;Mâu thuẫn nhà|sự ổn định lâu dài, gia đình vững|nghiêm túc, tính chuyện lâu dài, muốn ra mắt gia đình|áp lực gia đình hoặc truyền thống|xây dựng nền tảng lâu dài|một tương lai vững chắc, sung túc|bất ổn tài chính hoặc gia đình|áp lực từ gia đình|tranh chấp tiền bạc trong nhà|rõ ràng chuyện tiền trong gia đình|mâu thuẫn nếu không minh bạch",
+"🧒|1,0|Học hỏi;Cơ hội mới;Thực tế|Lười biếng;Thiếu tập trung;Lỡ cơ hội|cơ hội học hỏi, bắt đầu từ việc nhỏ|nghiêm túc, chậm mà chắc, thật lòng|việc còn thiếu kinh nghiệm thực tế|học thêm kỹ năng và bắt đầu từ việc nhỏ|một cơ hội học tập hay việc làm mới|thiếu tập trung, trì hoãn|lười biếng, thiếu động lực|sự trì hoãn và thiếu tập trung|đặt mục tiêu nhỏ và làm ngay|lỡ cơ hội vì chậm chạp",
+"🏇|1,0|Kiên trì;Đáng tin;Chậm mà chắc|Trì trệ;Nhàm chán;Cứng nhắc|sự kiên trì, chậm mà chắc|đáng tin, chung thủy, thể hiện bằng hành động|tiến độ chậm, thiếu bất ngờ|kiên trì từng bước|kết quả bền vững dù hơi chậm|trì trệ, nhàm chán|nhạt, thiếu cảm xúc, cứng nhắc|sự trì trệ hoặc quá cứng nhắc|thêm chút mới mẻ vào thói quen|chậm hoặc nhàm nếu không đổi mới",
+"👸|1,0|Chu đáo;Thực tế;Ấm no|Lo toan;Bỏ bê bản thân;Bao bọc quá|sự chu đáo, thực tế, ấm no|quan tâm bằng hành động, muốn chăm sóc|việc lo cho người khác mà quên mình|chăm sóc bản thân và giữ cân bằng|cuộc sống ấm no, an yên|nỗi lo tiền bạc, quá tải việc nhà|mệt, lo toan, bao bọc quá mức|lo âu tiền bạc và bỏ bê bản thân|chia sẻ việc và dành thời gian cho mình|kiệt sức nếu ôm hết",
+"🤴|1,-1|Thành đạt;Vững vàng;Sung túc|Thực dụng;Tham vọng quá;Cứng nhắc|sự thành đạt, vững vàng tài chính|nghiêm túc, muốn lo cho người kia, tính chuyện lâu dài|việc quá đặt nặng vật chất|quản lý tiền bạc khôn ngoan và lâu dài|thành công vững chắc, sung túc|lối sống quá thực dụng|tính toán, đặt tiền bạc lên trên|sự thực dụng hoặc tham vọng quá mức|nhớ rằng tiền không phải tất cả|mất mát vì quá tham"
+]};
+const SUIT_VI={wands:"Gậy",cups:"Cốc",swords:"Kiếm",pentacles:"Tiền"};
+const SUIT_EN={wands:"Wands",cups:"Cups",swords:"Swords",pentacles:"Pentacles"};
+const SUIT_EL={wands:"fire",cups:"water",swords:"air",pentacles:"earth"};
+const SUIT_PAL={wands:{bg:"#FFE2B8",d:"#B56E22"},cups:{bg:"#BFE6FA",d:"#2F7EAA"},swords:{bg:"#E3D3FF",d:"#7357C0"},pentacles:{bg:"#E6F78A",d:"#6E861A"}};
+const RANK_VI=["Át","2","3","4","5","6","7","8","9","10","Thị Đồng","Hiệp Sĩ","Hoàng Hậu","Vua"];
+const RANK_EN=["Ace","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Page","Knight","Queen","King"];
+const FKEYS=["st","fe","ob","ad","ou"];
+const toF=arr=>({up:Object.fromEntries(FKEYS.map((k,i)=>[k,arr[i]])),down:Object.fromEntries(FKEYS.map((k,i)=>[k,arr[i+5]]))});
+const CARDS=[
+ ...MAJORS.map((c,i)=>({id:"m"+i,suit:"major",num:i,el:MAJ_EL[i],f:toF(MAJ_F[i].split("|")),...c})),
+ ...Object.entries(MINOR_RAW).flatMap(([suit,rows])=>rows.map((row,i)=>{
+   const p=row.split("|"),t=p[1].split(",").map(Number);
+   return {id:suit[0]+(i+1),suit,num:i+1,el:SUIT_EL[suit],vi:`${RANK_VI[i]} ${SUIT_VI[suit]}`,en:`${RANK_EN[i]} of ${SUIT_EN[suit]}`,emoji:p[0],tone:t,
+     kw:{up:p[2].split(";"),down:p[3].split(";")},f:toF(p.slice(4,14))};
+ }))
+];
+
 const SUITS={major:"Ẩn chính",wands:"Gậy",cups:"Cốc",swords:"Kiếm",pentacles:"Tiền"};
 
 const TOPICS={love:{label:"Tình yêu",low:"tình yêu",emo:"💞"},work:{label:"Công việc",low:"công việc",emo:"💼"},family:{label:"Gia đình",low:"gia đình",emo:"🏡"},friends:{label:"Bạn bè",low:"bạn bè",emo:"🫶"},self:{label:"Bản thân",low:"bản thân",emo:"🌱"}};
@@ -628,8 +739,8 @@ const BACK_SVG=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 160"><d
 document.documentElement.style.setProperty("--back-img",`url("data:image/svg+xml,${encodeURIComponent(BACK_SVG)}")`);
 
 function faceHTML(card,w=120,rev=false){
-  const p=card.suit==="major"?PAL[card.num%PAL.length]:PAL[0];
-  const rn=card.suit==="major"?ROMAN[card.num]:card.num;
+  const p=card.suit==="major"?PAL[card.num%PAL.length]:SUIT_PAL[card.suit];
+  const rn=card.suit==="major"?ROMAN[card.num]:(card.num===1?"Át":card.num<=10?card.num:RANK_VI[card.num-1]);
   return `<div class="face${rev?" rev":""}" style="--w:${w}px" role="img" aria-label="${esc(card.vi)}${rev?" (ngược)":""}">
    <div class="face-art" style="--fc:${p.bg};--fd:${p.d}">
     <span class="st" style="top:8%;right:10%">${STAR}</span><span class="st" style="bottom:30%;left:9%;transform:scale(.7)">${STAR}</span>
@@ -638,9 +749,56 @@ function faceHTML(card,w=120,rev=false){
    </div></div>`;
 }
 const tone=(c,rev)=>c.tone[rev?1:0];
-const meaning=(c,topic,rev)=>c.m[topic][rev?1:0];
+const TOPIC_LEAD={love:"Chuyện tình cảm đang là",work:"Công việc đang là",family:"Chuyện nhà đang là",friends:"Chuyện bạn bè đang là",self:"Bạn iu đang ở giai đoạn"};
+const meaning=(c,topic,rev)=>{if(c.m)return c.m[topic][rev?1:0];const F=c.f[rev?"down":"up"];return `${TOPIC_LEAD[topic]||TOPIC_LEAD.self} ${F.st}. Bạn iu nên ${F.ad} nha.`};
 const kws=(c,rev)=>c.kw[rev?"down":"up"];
 const HARD_NOTE="Lá này hơi khó chịu xíu, nhưng có Bánh chúi ở đây nè, mình cùng xem nên làm gì nha.";
+/* =========================================================
+   ĐỌC LÁ THEO VỊ TRÍ — mỗi vị trí chọn đúng "mảnh nghĩa" của lá
+   {st} trạng thái · {fe} cảm xúc · {ob} trở ngại · {ad} lời khuyên · {ou} kết quả
+   {N} người hỏi · {P} người ấy · {A}/{B} hai lựa chọn
+   ========================================================= */
+const POS_T={
+ "Quá khứ":"Chuyện cũ: {st}.","Hiện tại":"Lúc này: {st}.","Tương lai":"Phía trước: {ou}.",
+ "Suy nghĩ":"{P} nghĩ về {N} với cảm giác {fe}.","Cảm xúc":"Trong lòng {P}: {fe}.","Hành động sắp tới":"Sắp tới, chuyện giữa hai người có thể đi tới: {ou}.",
+ "Ấn tượng về bạn":"{P} thấy ở {N}: {st}.","Cảm xúc thật":"Thật lòng {P}: {fe}.","Khả năng tiến xa":"@chance",
+ "Họ":"{P} lúc này: {st}.","Bạn":"{N} lúc này: {st}.","Mối quan hệ":"Mối quan hệ lúc này: {st}.",
+ "Trở ngại":"Điều đang cản bước: {ob}.","Lời khuyên":"Bánh chúi khuyên {N} {ad}.",
+ "Lý do chia tay":"Hai người xa nhau vì {ob}.","Họ bây giờ":"Bây giờ {P}: {fe}.","Khả năng quay lại":"@chance","Có nên không":"@should",
+ "Người đó là ai":"Người sắp đến: {st}.","Gặp ở đâu":"@place","Khi nào":"@time","Bạn cần chuẩn bị gì":"{N} nên {ad}.",
+ "Điểm mạnh":"@pair:Thế mạnh của {N}: {st}.|Thế mạnh đang bị che bởi {ob}.","Thử thách":"Thử thách lớn nhất: {ob}.",
+ "Cơ hội":"@pair:Cơ hội: {ou}.|Cơ hội đang bị chặn bởi {ob}.","Hướng đi":"Hướng đi hợp nhất: {ad}.",
+ "Công việc hiện tại":"Công việc bây giờ: {st}.","Điều bạn thật sự muốn":"Sâu bên trong, {N} muốn {ad}.",
+ "Nếu ở lại":"Nếu ở lại: {ou}.","Nếu rời đi":"Nếu rời đi: {ou}.",
+ "Dòng tiền hiện tại":"Tiền bạc lúc này: {st}.","Chỗ đang hao hụt":"Tiền đang hao vì {ob}.",
+ "Năng lực hiện tại":"@pair:Năng lực hiện tại: {st}.|Năng lực đang bị kéo xuống bởi {ob}.","Kết quả & lời khuyên":"Kết quả: {ou}. {N} nên {ad}.",
+ "Điều kết nối":"@pair:Điều kết nối hai người: {st}.|Sợi dây kết nối đang yếu vì {ob}.","Điều gây rạn nứt":"Điều làm hai người xa cách: {ob}.","Cách hàn gắn":"Để hàn gắn, hãy {ad}.",
+ "Bạn hiện tại":"{N} lúc này: {st}.","Nếu chọn A":"Chọn {A}, {N} sẽ trải qua: {st}.","Kết quả A":"Cuối đường {A}: {ou}.","Nếu chọn B":"Chọn {B}, {N} sẽ trải qua: {st}.","Kết quả B":"Cuối đường {B}: {ou}.",
+ "Thân":"Về sức khỏe: {st}. Hãy {ad}.","Tâm":"Tâm trí: {fe}.","Hồn":"Để tâm hồn nhẹ nhàng, hãy {ad}.",
+ "Vết thương":"Vết thương đến từ {ob}.","Điều cần buông":"{N} nên buông {ob}.","Điều cần giữ":"@pair:Hãy giữ lấy: {st}.|{N} cần {ad}.",
+ "Món quà của bạn":"@pair:Món quà của {N}: {st}.|Món quà ấy đang bị che bởi {ob}.","Bước tiếp theo":"Bước tiếp theo: {ad}.",
+ "Nền tảng":"Gốc rễ của chuyện này: {st}.","Mục tiêu":"{N} đang hướng tới: {ou}.","Tương lai gần":"Sắp tới: {ou}.","Bản thân":"{N} đang thấy mình {fe}.",
+ "Môi trường":"Xung quanh {N}: {st}.","Hy vọng & nỗi sợ":"{N} vừa mong vừa sợ: {ou}.","Kết quả":"Kết quả khả dĩ nhất: {ou}."
+};
+const EL_PLACE={fire:"nơi sôi nổi: thể thao, du lịch, sự kiện đông người",water:"nơi nhẹ nhàng nhiều cảm xúc: quán cà phê, buổi tiệc, qua bạn bè giới thiệu",air:"nơi trao đổi, học hỏi: lớp học, hội thảo, mạng xã hội",earth:"nơi làm việc hoặc việc thực tế: chỗ làm, cửa hàng, việc chung"};
+const EL_TIME={fire:"khá nhanh, trong vài ngày đến vài tuần",water:"vài tuần tới, khi cảm xúc đủ chín",air:"rất nhanh và bất ngờ, có khi chỉ vài ngày",earth:"từ từ, khoảng vài tháng"};
+function posRole(pos){const t=POS_T[pos]||"{ou}";if(/\{ob\}/.test(t)&&!t.startsWith("@pair"))return "ob";if(/\{ad\}/.test(t)&&!/\{st\}|\{ou\}/.test(t))return "ad";if(/\{ou\}|@chance|@should/.test(t))return "ou";if(/\{fe\}/.test(t))return "fe";return "st"}
+const cap1=s=>s?s[0].toUpperCase()+s.slice(1):s;
+function readCard(sp,c,names,topic){
+  const card=c.card,rev=c.rev,F=card.f[rev?"down":"up"],t=tone(card,rev);
+  if(sp.id==="daily"||sp.id==="yesno")return meaning(card,topic,rev);
+  let tpl=POS_T[c.pos];
+  if(!tpl)tpl=sp.id==="year"?"Tháng này: {ou}.":"{ou}.";
+  if(tpl==="@chance")tpl=t>0?"Khả năng cao nè: {ou}.":t<0?"Lúc này khả năng thấp, vì {ob}.":"Còn để ngỏ, {N} cần {ad} thì mới rõ.";
+  else if(tpl==="@should")tpl=t>0?"Nên nè, vì sẽ dẫn tới: {ou}.":t<0?"Chưa nên, vì dễ vướng {ob}.":"Cân nhắc thêm, {N} nên {ad} trước đã.";
+  else if(tpl==="@place")tpl=`Có thể gặp ở ${EL_PLACE[card.el]}.`;
+  else if(tpl==="@time")tpl=`Thời điểm: ${EL_TIME[card.el]}${rev?", nhưng có thể chậm hơn dự kiến":""}.`;
+  else if(tpl.startsWith("@pair:")){const [a,b]=tpl.slice(6).split("|");tpl=t<=0?b:a}
+  const P=names[0]||"người ấy",A=`“${names[0]||"A"}”`,B=`“${names[1]||"B"}”`;
+  const out=tpl.replace(/\{(st|fe|ob|ad|ou)\}/g,(_,k)=>F[k]).replace(/\{N\}/g,"bạn iu").replace(/\{P\}/g,P).replace(/\{A\}/g,A).replace(/\{B\}/g,B);
+  return out.split(/(?<=[.!?]\s)/).map(cap1).join("");
+}
+
 const DISCLAIMER="Tarot chỉ để tham khảo thui nha, tương lai nằm trong tay bạn iu đó 💛";
 
 /* ---------- vị trí & tên ---------- */
@@ -686,8 +844,29 @@ function localInterpret(r){
     const best=r.cards.slice().sort((a,b)=>tone(b.card,b.rev)-tone(a.card,a.rev))[0];
     const worst=r.cards.slice().sort((a,b)=>tone(a.card,a.rev)-tone(b.card,b.rev))[0];
     const who=sp.askName===1&&names[0]?` về ${names[0]}`:"";
-    summary=`Trải “${sp.name}”${who} theo chủ đề ${tp.low} có ${good} lá sáng và ${hard} lá cần lưu ý. Điểm sáng nhất là ${qt(lab(best))} với lá ${best.card.vi}`+
-      (tone(worst.card,worst.rev)<0?`, còn ${qt(lab(worst))} (${worst.card.vi}) là chỗ ${youi()} nên để tâm hơn.`:".");
+    /* Kể thành một mạch: tình hình → vướng ở đâu → nên làm gì → sẽ ra sao */
+    const F=c=>c.card.f[c.rev?"down":"up"];
+    const byRole=role=>r.cards.find(c=>posRole(c.pos)===role);
+    const S=byRole("st")||byRole("fe")||r.cards[0];
+    const O=byRole("ob");
+    const U=byRole("ou")||r.cards[n-1];
+    const A=byRole("ad")||U;
+    const sTxt=posRole(S.pos)==="fe"?`${names[0]||"người ấy"} đang ${F(S).fe}`:F(S).st;
+    if(sp.id==="year"){
+      const good3=r.cards.filter(c=>tone(c.card,c.rev)>0).map(c=>c.pos.split("/")[0]).slice(0,3);
+      const hard3=r.cards.filter(c=>tone(c.card,c.rev)<0).map(c=>c.pos.split("/")[0]).slice(0,3);
+      summary=`Năm tới có ${good} tháng sáng và ${hard} tháng cần để ý.`+(good3.length?` Tháng thuận nhất: ${good3.join(", ")}.`:"")+(hard3.length?` Tháng nên chậm lại: ${hard3.join(", ")}.`:"");
+    }else{
+      summary=`Tóm lại: ${sp.id==="ab"?"bạn iu lúc này: ":""}${sTxt}`+(O&&O!==S?`, đang vướng ở ${F(O).ob}`:"")+".";
+      if(sp.id!=="ab")summary+=tone(U.card,U.rev)<0?` Phía trước có thể là ${F(U).ou}, nên bạn iu hãy ${F(A).ad} để đổi hướng.`:` Nếu bạn iu ${F(A).ad}, phía trước: ${F(U).ou}.`;
+    }
+    const majors=r.cards.filter(c=>c.card.suit==="major").length, revs=r.cards.filter(c=>c.rev).length;
+    const sc={};r.cards.forEach(c=>{if(c.card.suit!=="major")sc[c.card.suit]=(sc[c.card.suit]||0)+1});
+    const domS=Object.entries(sc).sort((a,b)=>b[1]-a[1])[0];
+    const SUIT_MSG={wands:"chuyện này cần hành động và nhiệt huyết",cups:"cảm xúc là trung tâm của chuyện này",swords:"suy nghĩ, lời nói và quyết định là mấu chốt",pentacles:"chuyện thực tế, tiền bạc và công sức là mấu chốt"};
+    if(n>=3&&majors/n>=0.5)summary+=" Nhiều lá Ẩn chính: đây là giai đoạn bước ngoặt, không phải chuyện nhỏ đâu.";
+    else if(domS&&domS[1]>=2&&domS[1]/n>=0.4)summary+=` Nhiều lá ${SUIT_VI[domS[0]]}: ${SUIT_MSG[domS[0]]}.`;
+    if(n>=3&&revs/n>=0.5)summary+=" Nhiều lá ngược: năng lượng đang bị kẹt bên trong, mình gỡ từ chính mình trước nha.";
     if(sp.id==="ab"){
       const sA=tone(r.cards[1].card,r.cards[1].rev)+tone(r.cards[2].card,r.cards[2].rev), sB=tone(r.cards[3].card,r.cards[3].rev)+tone(r.cards[4].card,r.cards[4].rev);
       const A=`“${names[0]||"A"}”`,B=`“${names[1]||"B"}”`;
@@ -696,12 +875,49 @@ function localInterpret(r){
       const key=r.cards[sp.id==="ex"?2:1], t=tone(key.card,key.rev);
       summary+=t>0?` Lá ${key.card.vi} ở ${qt(lab(key))} cho thấy cửa đang mở đó.`:t<0?` Lá ${key.card.vi} ở ${qt(lab(key))} cho thấy lúc này cửa còn khép, ${youi()} chăm mình trước nha.`:` Lá ${key.card.vi} ở ${qt(lab(key))} cho thấy mọi thứ còn để ngỏ.`;
     }
-    summary+=lvl===1?" Nhìn chung mọi thứ đang thuận lắm nè ✨":lvl===0?" Nhìn chung đang cân bằng, quan trọng là cách bạn iu chọn bước tiếp 🌙":" Hơi nhiều thử thách xíu, nhưng lá nào cũng có lời khuyên kèm theo, mình làm từng bước nha 💛";
+    summary=summary.replace(/(^|[.!?]\s+)([a-zà-ỹđ])/g,(m,a,b)=>a+b.toUpperCase());
   }
   const pool=MSG_POOL[lvl], message=pool[hash(r.cards.map(c=>c.card.id).join()+r.ts)%pool.length];
   return {summary,message,level:lvl};
 }
 window.BanhChuiInterpreter={interpret:async r=>localInterpret(r)};
+/* =========================================================
+   ĐỌC CÂU HỎI (không cần AI): đoán chủ đề, thời điểm trong câu hỏi
+   rồi trả lời dựa trên lá quan trọng nhất. Có AI thì AI thay thế.
+   ========================================================= */
+const _n=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase();
+const Q_RULES=[
+ {k:"gamble",re:/trung so|xo so|vietlott|ve so|lo de|danh de|danh lo|ca do|ca cuoc|casino|danh bac|keo bong/},
+ {k:"money",re:/tien|tai chinh|luong|thuong tet|dau tu|chung khoan|coin|crypto|vay|no nan|giau|mua nha|mua xe|kinh doanh|buon ban|lam an/},
+ {k:"study",re:/\bthi\b|thi cu|dau dai hoc|truot|diem|hoc bong|bao ve|tot nghiep|hoc hanh|ielts|toeic/},
+ {k:"love",re:/nguoi yeu|\bny\b|crush|nguoi ay|anh ay|co ay|tinh cam|tinh yeu|yeu|thich minh|hen ho|cuoi|chia tay|quay lai|nguoi cu|\bex\b|toi minh|nhan tin|to tinh|ghen/},
+ {k:"work",re:/cong viec|viec lam|di lam|\bsep\b|dong nghiep|thang chuc|phong van|du an|nghi viec|doi viec|nhay viec|cong ty|offer|deadline|khach hang/},
+ {k:"family",re:/gia dinh|\bbo\b|\bme\b|ba me|bo me|anh trai|chi gai|em trai|em gai|ong ba|vo chong|con cai|ho hang/},
+ {k:"friends",re:/ban be|ban than|nhom ban|hoi ban|ban cung/}
+];
+const KIND_TOPIC={gamble:"work",money:"work",study:"work",love:"love",work:"work",family:"family",friends:"friends"};
+const KIND_LABEL={gamble:"vận may tiền bạc",money:"tiền bạc",study:"học hành, thi cử",love:"tình cảm",work:"công việc",family:"gia đình",friends:"bạn bè"};
+function readQuestion(q){const n=_n(q||"");const hit=Q_RULES.find(r=>r.re.test(n));
+  const when=(n.match(/hom nay|ngay mai|tuan nay|tuan sau|thang nay|thang sau|nam nay|nam sau|sap toi|toi nay/)||[])[0];
+  const WHEN={"hom nay":"hôm nay","ngay mai":"ngày mai","tuan nay":"tuần này","tuan sau":"tuần sau","thang nay":"tháng này","thang sau":"tháng sau","nam nay":"năm nay","nam sau":"năm sau","sap toi":"sắp tới","toi nay":"tối nay"};
+  return {kind:hit?hit.k:null,topic:hit?KIND_TOPIC[hit.k]:null,label:hit?KIND_LABEL[hit.k]:null,when:when?WHEN[when]:""}}
+const KEY_POS=["Kết quả","Tương lai","Câu trả lời","Kết quả & lời khuyên","Khả năng tiến xa","Khả năng quay lại"];
+function localQA(r){
+  const q=r.question;if(!q)return "";
+  const sp=SPREADS.find(x=>x.id===r.spread),info=readQuestion(q),topic=info.topic||r.topic,names=r.names||[];
+  const key=r.cards.find(c=>KEY_POS.includes(c.pos))||(sp.id==="year"?r.cards[0]:r.cards[r.cards.length-1]);
+  const adv=r.cards.find(c=>ADVICE_POS.includes(c.pos)&&c!==key);
+  const t=tone(key.card,key.rev),k=kws(key.card,key.rev).map(x=>x.toLowerCase());
+  const when=info.when?` ${info.when}`:"";
+  let verdict;
+  if(sp.id==="yesno")verdict=t>0?`Bánh chúi nghiêng về CÓ nè${info.when?`, ${info.when} năng lượng đang ủng hộ bạn iu`:""} 💛`:t<0?`Bánh chúi nghĩ là CHƯA đâu${info.when?` (ít nhất là ${info.when})`:""}, nhưng không phải mãi mãi đâu nha 🌙`:`Câu trả lời còn lửng lơ, chưa ngả hẳn về bên nào hết ✨`;
+  else verdict=t>0?`Nhìn chung là tín hiệu tốt nè${when?`,${when} mọi thứ đang thuận`:""} ✨`:t<0?`Thật lòng thì${when} chưa thuận lắm đâu, mình cần chuẩn bị kỹ hơn xíu 💛`:`Mọi thứ${when} còn để ngỏ, tùy vào cách bạn iu bước tiếp 🌙`;
+  let out=`${verdict}\n\nLá ${key.card.vi}${key.rev?" (ngược)":""}${sp.n>1?` ở vị trí ${qt(posLabel(sp,key.pos,names))}`:""} mang năng lượng ${k[0]} và ${k[1]}`+(info.label?`, Bánh chúi đọc theo hướng ${info.label} nha: `:": ")+(sp.n>1?readCard(sp,key,names,topic):key.card.m?meaning(key.card,topic,key.rev):(f=>cap1(f.st)+". Bạn iu nên "+f.ad+" nha.")(key.card.f[key.rev?"down":"up"]));
+  if(adv)out+=`\n\nLời khuyên từ lá ${adv.card.vi}: ${readCard(sp,adv,names,topic)}`;
+  if(info.kind==="gamble")out+=`\n\nÀ mà Bánh chúi nói nhỏ nè: tarot không đoán được con số trúng đâu. Chơi vui thì được, đừng xuống nhiều tiền vì lá bài nha 🍌`;
+  else if(info.kind==="money")out+=`\n\nChuyện tiền bạc lớn thì bạn iu tính toán kỹ hoặc hỏi người có chuyên môn nữa nha, lá bài chỉ để tham khảo thui 💛`;
+  return out;
+}
 function yesNo(c,rev){const t=tone(c,rev);return t>0?{t:"CÓ nè! 💛",s:"Câu trả lời nghiêng về phía Có"}:t<0?{t:"Chưa phải lúc 🌙",s:"Câu trả lời nghiêng về phía Không"}:{t:"Còn lửng lơ ✨",s:"Có thể, tùy vào bạn iu"}}
 
 /* =========================================================
@@ -871,12 +1087,13 @@ function cardSheet(c){
   let t="love";
   const bg=document.createElement("div");bg.className="sheet-bg";
   const draw=()=>{bg.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(c.vi)}"><div class="grab"></div>
-   <div style="display:flex;gap:16px;align-items:center">${faceHTML(c,104)}<div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span class="eyebrow">${SUITS[c.suit]} · ${c.suit==="major"?ROMAN[c.num]:c.num}</span><h3 style="font-size:22px;font-weight:800">${esc(c.vi)}</h3><span class="muted">${esc(c.en)}</span></div></div>
-   <div class="mean-box"><b>Xuôi</b><div class="kws">${c.kw.up.map(k=>`<span class="kw" style="background:#fff">${k}</span>`).join("")}</div></div>
-   <div class="mean-box"><b>Ngược</b><div class="kws">${c.kw.down.map(k=>`<span class="kw" style="background:#fff">${k}</span>`).join("")}</div></div>
-   <div class="chips">${Object.entries(TOPICS).map(([k,v])=>`<button class="chip" data-t="${k}" aria-pressed="${k===t}">${v.label}</button>`).join("")}</div>
+   <div style="display:flex;gap:16px;align-items:center">${faceHTML(c,104)}<div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span class="eyebrow">${SUITS[c.suit]}${c.suit==="major"?" · "+ROMAN[c.num]:""}</span><h3 style="font-size:22px;font-weight:800">${esc(c.vi)}</h3><span class="muted">${esc(c.en)}</span></div></div>
+   ${["up","down"].map(o=>{const F=c.f[o];return `<div class="mean-box"${o==="down"?' style="background:#FFF1F6"':""}><b>${o==="up"?"Xuôi":"Ngược"}</b>
+     <div class="kws">${c.kw[o].map(k=>`<span class="kw" style="background:#fff">${k}</span>`).join("")}</div>
+     <p style="font-size:14px;margin-top:4px"><b>Tình hình:</b> ${esc(F.st)}<br><b>Cảm xúc:</b> ${esc(F.fe)}<br><b>Trở ngại:</b> ${esc(F.ob)}<br><b>Lời khuyên:</b> ${esc(F.ad)}<br><b>Kết quả:</b> ${esc(F.ou)}</p></div>`}).join("")}
+   ${c.m?`<div class="chips">${Object.entries(TOPICS).map(([k,v])=>`<button class="chip" data-t="${k}" aria-pressed="${k===t}">${v.label}</button>`).join("")}</div>
    <div class="mean-box"><b>Khi xuôi</b><p>${esc(c.m[t][0])}</p></div>
-   <div class="mean-box" style="background:#FFF1F6"><b>Khi ngược</b><p>${esc(c.m[t][1])}</p></div>
+   <div class="mean-box" style="background:#FFF1F6"><b>Khi ngược</b><p>${esc(c.m[t][1])}</p></div>`:""}
    <button class="btn-ghost btn-block" data-close>Đóng</button></div>`};
   draw();document.body.appendChild(bg);
   bg.addEventListener("click",e=>{if(e.target===bg||e.target.closest("[data-close]")){bg.remove();return}
@@ -1086,7 +1303,7 @@ const Flow={
   reveal(){
     const st=this.st;
     const src=st.sel.map(i=>$(`.slot[data-i="${i}"] .pcard`).getBoundingClientRect());
-    st.cards=st.sel.map((_,k)=>({card:st.deck[k],rev:Math.random()<0.3,pos:st.pos[k]}));
+    st.cards=st.sel.map((i,k)=>({card:st.deck[i],rev:Math.random()<0.3,pos:st.pos[k]}));
     st.key=st.sp.id==="daily"?"daily-"+dkey()+"-"+st.topic:st.sp.id+"-"+st.ts;
     if(st.sp.id==="daily"){setDaily(st.topic,st.cards[0].card.id,st.cards[0].rev);saveJournal(this.reading())}
     const n=st.cards.length,w=n===1?168:n===4?110:n<=3?104:n<=6?96:70;
@@ -1138,10 +1355,10 @@ const Flow={
      ${r.cards.map(c=>{const hint=posHint(sp,c.pos,names);return `<article class="res-card"><div class="res-top">${faceHTML(c.card,96,c.rev)}<div class="txt">
         <span class="eyebrow">${esc(sp.id==="daily"?"Lá hôm nay":posLabel(sp,c.pos,names))}</span><h3>${esc(c.card.vi)}</h3><span class="muted" style="font-size:13px">${esc(c.card.en)}</span>
         <div class="kws">${c.rev?'<span class="pill rev">Ngược</span>':'<span class="pill">Xuôi</span>'}${kws(c.card,c.rev).map(k=>`<span class="kw">${k}</span>`).join("")}</div></div></div>
-        ${hint&&sp.id!=="daily"?`<p class="pos-hint">${esc(hint)}</p>`:""}
+        
         ${tone(c.card,c.rev)<0?`<p class="soft-note">${HARD_NOTE}</p>`:""}
-        <p>${esc(meaning(c.card,r.topic,c.rev))}</p></article>`}).join("")}
-     ${r.question&&(this.st.qa||SAMPLE)?`<section class="sum-card a" style="background:#fff;box-shadow:var(--shadow)"><h3>🔮 Trả lời câu hỏi của ${esc(youi())}</h3><p id="qa-text">${esc(this.st.qa||"Bánh chúi đang ngẫm câu hỏi của bạn iu nè…")}</p></section>`:""}
+        <p>${esc(readCard(sp,c,names,r.topic))}</p></article>`}).join("")}
+     ${r.question?`<section class="sum-card a" style="background:#fff;box-shadow:var(--shadow)"><h3>🔮 Trả lời câu hỏi của ${esc(youi())}</h3><p id="qa-text" style="white-space:pre-line">${esc(this.st.qa||(SAMPLE?"Bánh chúi đang ngẫm câu hỏi của bạn iu nè…":localQA(r)))}</p></section>`:""}
      <section class="sum-card a"><h3>${mascot("m")}Tổng kết của Bánh chúi</h3><p>${esc(it.summary)}</p></section>
      <section class="sum-card b"><h3>💌 Lời nhắn của Bánh chúi</h3><p>${esc(it.message)}</p></section>
      <p class="disclaimer">${DISCLAIMER}</p>
@@ -1227,12 +1444,13 @@ const Chat={
     const nq=norm(q);
     if(/lam gi|nen|loi khuyen|tiep theo|cach nao/.test(nq)){
       const adv=st.cards.find(c=>ADVICE_POS.includes(c.pos))||st.cards[st.cards.length-1];
-      return {text:`Theo lá ${adv.card.vi}${sp.n>1?` ở vị trí ${qt(posLabel(sp,adv.pos,names))}`:""}, Bánh chúi nghĩ ${youi()} nên: ${meaning(adv.card,st.topic,adv.rev)}\n\nBắt đầu từ một việc nhỏ nhất làm được ngay hôm nay nha 💛`};
+      return {text:`Theo lá ${adv.card.vi}${sp.n>1?` ở vị trí ${qt(posLabel(sp,adv.pos,names))}`:""}, Bánh chúi nghĩ thế này: ${sp.n>1?readCard(sp,adv,names,st.topic):meaning(adv.card,st.topic,adv.rev)}\n\nBắt đầu từ một việc nhỏ nhất làm được ngay hôm nay nha 💛`};
     }
     if(/ky hon|chi tiet|ro hon|giai thich|tong ket/.test(nq)){
       const lines=all.map(c=>`• ${sp.n>1||c.pos==="Lá làm rõ"?(c.pos==="Lá làm rõ"?"Lá làm rõ":posLabel(sp,c.pos,names))+": ":""}${c.card.vi}${c.rev?" (ngược)":""} – ${kws(c.card,c.rev).join(", ").toLowerCase()}`);
       return {text:`Ghép các lá lại nè:\n${lines.join("\n")}\n\n${st.interp?st.interp.summary:""}`};
     }
+    if(readQuestion(q).kind||/\?|khong|ko\b|chua|co nen|liệu/.test(nq)){const r2=Object.assign({},Flow.reading(),{question:q});return {text:localQA(r2)}}
     return {text:`Câu này Bánh chúi muốn hỏi thêm lá bài cho chắc nè. ${Youi()} rút thêm 1 lá làm rõ nha 🃏`,draw:this.extraCount()<MAX_EXTRA};
   },
   rules(){
@@ -1255,7 +1473,7 @@ Tổng kết đã đưa: ${st.interp?st.interp.summary:""}`;
     try{const {text}=await SAMPLE(prompt,{modelTier:"quick",onText:({text})=>{const e=el();if(e)e.textContent=nameText(text)}});
       st.qa=text;updateJournal(Flow.reading());const e=el();if(e)e.textContent=nameText(text);
     }catch(e){const x=el();if(!x)return;
-      if(e&&e.code==="not_granted"){SAMPLE=null;x.closest("section").remove()}
+      if(e&&e.code==="not_granted"){SAMPLE=null;x.textContent=nameText(localQA(Flow.reading()))}
       else x.textContent=(e&&e.text)||"Bánh chúi chưa nghĩ ra kịp, bạn iu hỏi lại ở ô chat bên dưới nha 🍌";}
   },
   async ask(q){
